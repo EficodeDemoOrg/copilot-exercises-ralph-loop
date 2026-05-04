@@ -74,11 +74,20 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 1. **Familiarize yourself** with `PROMPT.md` and `scripts/ralph.sh`. Notice that the prompt only describes the agent's workflow — it does not hard-code any specific feature. All requirements live in `PRD.md`.
 
-2. **Create a feature plan** in `PRD.md` using Copilot in Plan mode. Ask Copilot to plan the following two features, using the checkbox task format expected by `PROMPT.md` (`- [ ] Task description`):
-   - Users can categorize ToDo items into one of four categories: **Work**, **Home**, **Hobbies**, or **Uncategorized**.
-   - Users can manually change the display order of their todos.
+1. **Create a feature plan** in `PRD.md` using Copilot in Plan mode. Ask Copilot to plan a couple of new features, using the checkbox task format expected by `PROMPT.md` (`- [ ] Task description`). An example prompt:
+   ```markdown
+   Create an implementation plan for the following functionality in #file:PRD.md:
 
-3. **Start the Ralph loop:**
+   - Users can categorize ToDo items into one of four categories: Work, Home, Hobbies, or Uncategorized.
+
+   - Users can filter the ToDo list based on the category. 
+   
+   Use a format in PRD.md expected by #file:PROMPT.md . Keep the tasks relatevely small.
+   ```
+1. Once the plan looks good, ask Copilot to save it to `PRD.md` — without implementing anything yet.
+
+1. **Start the Ralph loop.**
+   With `PRD.md` ready, kick off the implementation by running the loop script. You can *configure the model and iteration limit* via environment variables.
 
    ```bash
    scripts/ralph.sh
@@ -90,7 +99,7 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
    MAX_ITER=20 scripts/ralph.sh
    ```
 
-4. **Follow the progress.**
+1. **Follow the progress.**
 The script prints status information to stdout for each iteration.
 
 Watch how the agent:
@@ -100,7 +109,7 @@ Watch how the agent:
    - Creates `STOP` when all work is done
    - Saves detailed logs in `.ralph/`
 
-5. **Try the finished app:**
+1. **Try the finished app:**
 
    ```bash
    npm run dev
