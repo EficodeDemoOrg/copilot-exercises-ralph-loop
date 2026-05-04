@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ToDo List</title>
+    <style>
+      body { font-family: sans-serif; max-width: 600px; margin: 2rem auto; padding: 0 1rem; }
+      h1 { margin-bottom: 1rem; }
+      .add-form { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
+      .add-form input { flex: 1; padding: 0.4rem 0.6rem; font-size: 1rem; }
+      .add-form button { padding: 0.4rem 0.8rem; font-size: 1rem; cursor: pointer; }
+      #todo-list { list-style: none; padding: 0; margin: 0; }
+      .todo-item { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #ddd; }
+      .todo-item button { padding: 0.2rem 0.5rem; cursor: pointer; }
+    </style>
+  </head>
+  <body>
+    <h1>ToDo List</h1>
+    <div class="add-form">
+      <label for="todo-input" class="visually-hidden">New todo description</label>
+      <input id="todo-input" type="text" placeholder="What needs to be done?" />
+      <button id="add-btn" type="button">Add</button>
+    </div>
+    <ul id="todo-list" aria-label="Todo items"></ul>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

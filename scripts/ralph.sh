@@ -40,7 +40,7 @@ fi
 
 mkdir -p .ralph
 
-copilot_args=(--allow-all-tools)
+copilot_args=(--allow-all-tools --autopilot)
 if [[ -n "$MODEL" ]]; then
   copilot_args+=(--model "$MODEL")
 fi
