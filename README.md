@@ -84,7 +84,8 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
    
    Use a format in PRD.md expected by #file:PROMPT.md . Keep the tasks relatevely small.
    ```
-1. Once the plan looks good, ask Copilot to save it to `PRD.md` — without implementing anything yet.
+1. **Save the plan.**
+Once the plan looks good, ask Copilot to save it to `PRD.md` — without implementing anything yet.
 
 1. **Start the Ralph loop.**
    With `PRD.md` ready, kick off the implementation by running the loop script. You can *configure the model and iteration limit* via environment variables.
@@ -102,12 +103,12 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 1. **Follow the progress.**
 The script prints status information to stdout for each iteration.
 
-Watch how the agent:
-   - Starts a new Copilot session with fresh context after each iteration
-   - Ticks off completed items in `PRD.md`
-   - Appends entries to `progress.md`
-   - Creates `STOP` when all work is done
-   - Saves detailed logs in `.ralph/`
+   Watch how the agent:
+      - Starts a new Copilot session with fresh context after each iteration
+      - Ticks off completed items in `PRD.md`
+      - Appends entries to `progress.md`
+      - Creates `STOP` when all work is done
+      - Saves detailed logs in `.ralph/`
 
 1. **Try the finished app:**
 
