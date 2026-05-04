@@ -1,14 +1,27 @@
-import type { AppState, Filter, TodoItem } from './types.ts';
+import type { AppState, Filter, TodoCategory, TodoItem } from './types.ts';
 
-export function addTodo(state: AppState, description: string): AppState {
+export function addTodo(
+    state: AppState,
+    description: string,
+    category: TodoCategory = 'Uncategorized',
+): AppState {
     const trimmed = description.trim();
     if (trimmed === '') return state;
     const item: TodoItem = {
         id: crypto.randomUUID(),
         description: trimmed,
         completed: false,
+        category,
     };
     return [...state, item];
+}
+
+export function filterByCategory(
+    state: AppState,
+    category: TodoCategory | 'all',
+): AppState {
+    if (category === 'all') return state;
+    return state.filter((item) => item.category === category);
 }
 
 export function deleteTodo(state: AppState, id: string): AppState {

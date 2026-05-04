@@ -21,6 +21,13 @@
         <label for="todo-input" class="visually-hidden">New reminder</label>
         <input id="todo-input" type="text" placeholder="Add a new reminder…" spellcheck="true"
           autocapitalize="sentences" />
+        <label for="todo-category" class="visually-hidden">Category</label>
+        <select id="todo-category" class="category-select" aria-label="Category">
+          <option value="Uncategorized" selected>Uncategorized</option>
+          <option value="Work">Work</option>
+          <option value="Home">Home</option>
+          <option value="Hobbies">Hobbies</option>
+        </select>
         <button id="add-btn" class="add-btn" type="submit" aria-label="Add reminder">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
             stroke-linejoin="round" aria-hidden="true">
@@ -34,6 +41,19 @@
         <button class="filter-tab" type="button" role="tab" aria-selected="false" data-filter="active">Active</button>
         <button class="filter-tab" type="button" role="tab" aria-selected="false"
           data-filter="completed">Completed</button>
+      </div>
+
+      <div class="category-filter" role="tablist" aria-label="Filter by category">
+        <button class="category-filter-tab" type="button" role="tab" aria-selected="true"
+          data-category="all">All</button>
+        <button class="category-filter-tab" type="button" role="tab" aria-selected="false"
+          data-category="Work">Work</button>
+        <button class="category-filter-tab" type="button" role="tab" aria-selected="false"
+          data-category="Home">Home</button>
+        <button class="category-filter-tab" type="button" role="tab" aria-selected="false"
+          data-category="Hobbies">Hobbies</button>
+        <button class="category-filter-tab" type="button" role="tab" aria-selected="false"
+          data-category="Uncategorized">Uncategorized</button>
       </div>
 
       <ul id="todo-list" class="todo-list" aria-label="Reminders"></ul>

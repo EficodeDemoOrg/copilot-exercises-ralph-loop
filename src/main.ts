@@ -1,12 +1,14 @@
 import './styles/main.css';
 
-import type { AppState, Filter, TodoItem } from './types.ts';
+import type { AppState, Filter, TodoCategory, TodoItem } from './types.ts';
+import { TODO_CATEGORIES } from './types.ts';
 import {
   addTodo,
   clearCompleted,
   countActive,
   countCompleted,
   deleteTodo,
+  filterByCategory,
   filterTodos,
   toggleCompleted,
 } from './state.ts';
@@ -16,6 +18,7 @@ import { confirmDialog } from './ui/confirm.ts';
 
 let state: AppState = loadTodos();
 let filter: Filter = 'all';
+let categoryFilter: TodoCategory | 'all' = 'all';
 
 function persist(next: AppState): boolean {
   try {
@@ -88,6 +91,12 @@ function renderTodoItem(item: TodoItem): HTMLLIElement {
   text.className = 'todo-text';
   text.textContent = item.description;
 
+  // Category badge
+  const badge = document.createElement('span');
+  badge.className = `category-badge category-${item.category.toLowerCase()}`;
+  badge.textContent = item.category;
+  badge.setAttribute('aria-label', `Category: ${item.category}`);
+
   // Delete
   const deleteBtn = document.createElement('button');
   deleteBtn.type = 'button';
@@ -108,6 +117,7 @@ function renderTodoItem(item: TodoItem): HTMLLIElement {
 
   li.appendChild(label);
   li.appendChild(text);
+  li.appendChild(badge);
   li.appendChild(deleteBtn);
   return li;
 }
@@ -121,6 +131,9 @@ function renderEmptyState(): HTMLLIElement {
   if (state.length === 0) {
     pathD = ICON_EMPTY_ALL;
     caption = 'Nothing to do — add your first reminder above.';
+  } else if (categoryFilter !== 'all' && filterByCategory(filterTodos(state, filter), categoryFilter).length === 0) {
+    pathD = ICON_EMPTY_ALL;
+    caption = `No reminders in ${categoryFilter}.`;
   } else if (filter === 'active') {
     pathD = ICON_EMPTY_DONE;
     caption = 'All caught up.';
@@ -140,7 +153,7 @@ function render(): void {
   const list = document.getElementById('todo-list') as HTMLUListElement;
   list.innerHTML = '';
 
-  const visible = filterTodos(state, filter);
+  const visible = filterByCategory(filterTodos(state, filter), categoryFilter);
   if (visible.length === 0) {
     list.appendChild(renderEmptyState());
   } else {
@@ -153,6 +166,12 @@ function render(): void {
   for (const tab of document.querySelectorAll<HTMLButtonElement>('.filter-tab')) {
     const value = tab.dataset['filter'] as Filter | undefined;
     tab.setAttribute('aria-selected', String(value === filter));
+  }
+
+  // Category filter selected state
+  for (const tab of document.querySelectorAll<HTMLButtonElement>('.category-filter-tab')) {
+    const value = tab.dataset['category'];
+    tab.setAttribute('aria-selected', String(value === categoryFilter));
   }
 
   // Footer
@@ -170,10 +189,16 @@ function render(): void {
 function handleAdd(e: SubmitEvent): void {
   e.preventDefault();
   const input = document.getElementById('todo-input') as HTMLInputElement;
-  const next = addTodo(state, input.value);
+  const select = document.getElementById('todo-category') as HTMLSelectElement;
+  const rawCategory = select.value;
+  const category: TodoCategory = (TODO_CATEGORIES as readonly string[]).includes(rawCategory)
+    ? (rawCategory as TodoCategory)
+    : 'Uncategorized';
+  const next = addTodo(state, input.value, category);
   if (next === state) return;
   if (!persist(next)) return;
   input.value = '';
+  select.value = 'Uncategorized';
   render();
 }
 
@@ -202,6 +227,21 @@ document.addEventListener('DOMContentLoaded', () => {
       const value = tab.dataset['filter'] as Filter | undefined;
       if (!value) return;
       filter = value;
+      render();
+    });
+  }
+
+  for (const tab of document.querySelectorAll<HTMLButtonElement>('.category-filter-tab')) {
+    tab.addEventListener('click', () => {
+      const raw = tab.dataset['category'];
+      if (!raw) return;
+      if (raw === 'all') {
+        categoryFilter = 'all';
+      } else if ((TODO_CATEGORIES as readonly string[]).includes(raw)) {
+        categoryFilter = raw as TodoCategory;
+      } else {
+        return;
+      }
       render();
     });
   }

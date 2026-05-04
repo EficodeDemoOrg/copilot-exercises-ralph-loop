@@ -1,7 +1,8 @@
-import type { AppState, TodoItem } from './types.ts';
+import type { AppState, TodoCategory, TodoItem } from './types.ts';
+import { TODO_CATEGORIES } from './types.ts';
 
 export const TODOS_STORAGE_KEY = 'todos.v1';
-const CURRENT_VERSION = 2;
+const CURRENT_VERSION = 3;
 
 interface StoredPayload {
     version: number;
@@ -13,6 +14,12 @@ interface LegacyTodoV1 {
     description: string;
 }
 
+interface LegacyTodoV2 {
+    id: string;
+    description: string;
+    completed: boolean;
+}
+
 function isObject(value: unknown): value is Record<string, unknown> {
     return typeof value === 'object' && value !== null;
 }
@@ -22,12 +29,26 @@ function isLegacyTodoV1(value: unknown): value is LegacyTodoV1 {
     return typeof value['id'] === 'string' && typeof value['description'] === 'string';
 }
 
-function isTodoItem(value: unknown): value is TodoItem {
+function isLegacyTodoV2(value: unknown): value is LegacyTodoV2 {
     if (!isObject(value)) return false;
     return (
         typeof value['id'] === 'string' &&
         typeof value['description'] === 'string' &&
         typeof value['completed'] === 'boolean'
+    );
+}
+
+function isTodoCategory(value: unknown): value is TodoCategory {
+    return typeof value === 'string' && (TODO_CATEGORIES as readonly string[]).includes(value);
+}
+
+function isTodoItem(value: unknown): value is TodoItem {
+    if (!isObject(value)) return false;
+    return (
+        typeof value['id'] === 'string' &&
+        typeof value['description'] === 'string' &&
+        typeof value['completed'] === 'boolean' &&
+        isTodoCategory(value['category'])
     );
 }
 
@@ -40,12 +61,22 @@ function migrate(payload: StoredPayload): TodoItem[] {
     if (payload.version === CURRENT_VERSION) {
         return payload.todos.filter(isTodoItem);
     }
+    if (payload.version === 2) {
+        // v2 → v3: default `category` to 'Uncategorized'.
+        return payload.todos.filter(isLegacyTodoV2).map((t) => ({
+            id: t.id,
+            description: t.description,
+            completed: t.completed,
+            category: 'Uncategorized',
+        }));
+    }
     if (payload.version === 1) {
-        // v1 → v2: default `completed` to false.
+        // v1 → v3: default `completed` to false and `category` to 'Uncategorized'.
         return payload.todos.filter(isLegacyTodoV1).map((t) => ({
             id: t.id,
             description: t.description,
             completed: false,
+            category: 'Uncategorized',
         }));
     }
     console.warn(`Unknown todos storage version: ${payload.version}; ignoring.`);
