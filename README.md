@@ -105,3 +105,7 @@ Watch how the agent:
    ```bash
    npm run dev
    ```
+
+## 🎬 Demo
+
+Want to skip the planning step and jump straight into the loop? Check out the `demo` branch — it includes a ready-made `PRD.md` so you can start the Ralph loop immediately.
